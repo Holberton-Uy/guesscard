@@ -1,8 +1,7 @@
 from requests import get
+from card import Card
 
 base_uri = 'https://deckofcardsapi.com/api/deck/'
-
-cards = {'ACE':1, 'QUEEN':10, 'JACK':10, 'KING':10}
 
 def shuffle_deck(count=1):
     shuffle = f'{base_uri}new/shuffle/?deck_count={count}'
@@ -17,10 +16,8 @@ def draw_card_value(deck_id, count=1):
     r = get(shuffle)
     if(r):
         data = r.json()
-        value, remaining = data['cards'][0]['value'], data['remaining']
-        if (not value.isnumeric()):
-            value = cards[value]
-        return int(value), int(remaining)
+        card, remaining = Card(**data['cards'][0]), data['remaining']
+        return card, int(remaining)
     raise Exception
 
 def check_cards(guess, old_value, new_value):
@@ -34,24 +31,25 @@ def main():
     points = 0
     try:
         deck_id = shuffle_deck(3)
-        last_value, remaining = draw_card_value(deck_id, 1)
-        print(f"Card value is: {last_value}")
+        last_card, remaining = draw_card_value(deck_id, 1)
+        print(f"Card value is: {last_card}")
         while not game_over and remaining:
             ans = input("Next is + (higher) or - (lower)? ")
             while (ans != '-' and ans != '+'):
                 ans = input("Next is + (higher) or - (lower)? ")
-            new_value, remaining = draw_card_value(deck_id, 1)
-            print(f"Card value is: {new_value}")
-            if (not check_cards(ans, last_value, new_value)):
+            new_card, remaining = draw_card_value(deck_id, 1)
+            print(f"Card value is: {new_card}")
+            if (not check_cards(ans, last_card, new_card)):
                 game_over = True
                 break
-            last_value = new_value
+            last_card = new_card
             points += 1
         if game_over:
             print(f"Sorry, you lose. Your score is {points}")
             exit(0)
         print("YOU WON!")
-    except Exception:
+    except Exception as e:
+        print(e)
         print("PANIC: Error contacting API.")
         exit(1)
 
