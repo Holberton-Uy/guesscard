@@ -1,0 +1,34 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "hostRequirements": {
+    "cpus": 2
+  },
+/* 
+// Config for Flask env
+  "waitFor": "onCreateCommand",
+  "updateContentCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "",
+  "postAttachCommand": {
+    "server": "flask --debug run"
+  },
+  "portsAttributes": {
+    "5000": {
+      "label": "Application",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "forwardPorts": [5000]  
+*/
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md"
+      ]
+    },
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  }
+}
